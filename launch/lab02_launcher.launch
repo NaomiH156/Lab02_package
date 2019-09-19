@@ -1,0 +1,7 @@
+<!-- idk what im actually doing -->
+<launch>
+  <include file = "$(find stdr_simulator/stdr_robot)/launch/robot_manager.launch/>
+
+
+
+</launch>
