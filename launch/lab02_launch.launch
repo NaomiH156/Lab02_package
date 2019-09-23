@@ -1,0 +1,21 @@
+<launch>
+
+	<include file="$(find stdr_launchers)/launch/server_with_map_and_gui.launch"/>
+	<!-- launches the map and the gui associated with the map. -->	
+
+	<!--<include file="$(find stdr_robot)/launch/robot_manager.launch"/> -->
+	<!-- server_with_map_and_gui.launch already includes robot_manager.launch i guess?-->
+	<!-- launches the robot_manager.launch file, which launches the appropriate robot nodes.-->
+
+	<node pkg="rqt_gui" type = "rqt_gui" name = "rqt_gui" />
+	<!-- launches the robot steering gui -->
+
+	<!--put another tag in here to launch the robot itself-->
+
+
+	<node pkg="lab02_package" type="lab02_package_node" name = "lab02_node_main" output="screen"/>
+	<!-- this is where you anonymize the node so that multiple instances of the same node have different names.
+	go back and edit this in later. -->
+
+</launch>
+

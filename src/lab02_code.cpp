@@ -1,54 +1,95 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include <sstream>
-#include <stdlib.h> //this one is from the canvas site as well
+#include <sstream> //I don't know what sstream is for but I had it earlier so I'm gonna keep it
+#include <stdlib.h> 
+#include "geometry_msgs/Twist.h" //different topics to include
+#include "sensor_msgs/LaserScan.h"
+//#include "stdr_simulator/robot0/cmd_vel.h" //how to modify this if there's more than one robot?
 
-//#include "stdr_simulator/robot0/cmd_vel.h"
-//Do one of the above lines for every topic you subscribe to
-//figure out what to type for topics published by a different package/node
+//Okay FUCK everything else im gonna see if i can just write a node that subscribes and prints what info it is hearing
 
-//Please be nice to me Dr. Lee i have 0 idea what i am doing - Naomi Hourihane
+//"global" variables:
+float lin_vel = 0;
+float ang_vel = 0;
+std::vector<float> laser_data;
+
+//Put some callback functions here
 
 
+void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg){
+	laser_data = msg-> ranges;
+	//printf("Got Laser scan data \n");	
+	ROS_INFO("Got laser scan data\n");
+}
+
+void VelocityCallback(const geometry_msgs::Twist::ConstPtr& msg){
+	lin_vel = msg->linear.x;
+	ang_vel = msg->angular.z;
+	printf("Desired velocities are:\n linear [%f]\n angular: [%f]\n", lin_vel, ang_vel);
+	//ROS_INFO("Desired Velocities are: linear: [%f]\n angular: [%f]\n", lin_vel, ang_vel);
+}
 
 int main(int argc, char **argv){
+	ROS_INFO("Main Node started!!\n");
+	ros::init(argc, argv, "lab02_package_node"); //does this have to match name of node in CMakeLists.txt?
+	ros::NodeHandle handle;
+//-------------------------------------------------------------------------------------------	
+	//"subscribe" notes:
 
-	//the following is the code i copied off of the canvas website
-	// Process command line parameter looking for a -n string name
-	// and should be placed after the ros::init() invocation.
-	// rosrun <package_name> <executable_name> -n <new_name>
-	// or
-	// rosrun subscriber_package subscriber_node -n alternate_topic
-	int opt;
-	while ((opt = getopt(argc, (argv), "n:")) != -1) {
-	  switch (opt) {
-	    case 'n':
-	      topic_name = optarg;
-	      break;
-	    default:
-	      printf("The -%c is not a recognized parameter\n", opt);
-	      break; 
-	  }
-	}
-	int refresh_rate = 1000;
-	ros :: init(argc, argv, topic_name);
-	ros :: NodeHandle n;
-	ros :: Subscriber des_vel = n . subscribe ( "des_vel" , refresh_rate);
-	ros :: Subscriber laser_data = n . subscribe ( "robot0/laser_1", refresh_rate);
-	ros :: Publisher cmd_vel_update = n . advertise ( "robot0/cmd_vel" , refresh_rate);
+	//subscribe() is how you tell ROS you wanna receive messages on a given topic
+	//subscribe() returns a subscriber object that you hold on to until you want to unsubscribe
+	//Messages are passed to the callback function
+	//first argument - name of topic to subscribe to
+	//second argument - size of message queue
+	//third argument - name of callback function to call
+	ros::Subscriber vel_sub = handle.subscribe("des_vel", 1, VelocityCallback);
+		//ros::Subscriber is like the variable type (like when you type "int x = 5;").
+		//"hand;e" is the node handle we created above
+		//subscribe() is a function (included in ros.h or something)
+		//"vel_sub" = "velocity subscription"
+	ros::Subscriber las_sub = handle.subscribe("/robot0/laser_1", 1, LaserCallback);
+		//"las_sub" = "laser subscription"
+		//MODIFY THIS CALL FOR IF THERE IS MORE THAN ONE ROBOT IN THE SIMULATION??
+//-------------------------------------------------------------------------------------------	
+	//"publish" notes:
+	
+	//advertise() function tells ros to publish on a given topic.
+	//advertise() returns a Publisher object which allows you to publish MESSAGES on a TOPIC by calling publish()
+	//argument in <> tags is the message type. Note that you use :: instead of /
+	//second argument to advertise is the name of the topic you are publishing to
+	//third argument is size of message queue
+	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+		//again, ros::Publisher is the variable type
+		//"handle" is the nodehandle from earlier
+		//advertise is a function. I guess you can have function<one_arg>(another_arg) in CPP?? idk
+		//"vel_pub" = "velocity publish"
+//-----------------------------------------------------------------------------------------
+	//"spin" notes
 
-	//quick and dirty pseudocode:
-	//have a while loop spinning at a certain rate
-	//each timestep, have it check the distances around it and identify the minimum distance
-		//get this info by subscribing to robot0/laser_1??
-	//steer the robot away from the minimum distance
-	//if no distances are below a minimum, continue straight
-	//i.e. calculate velocity and heading??? look at stdr simulator code to figure out how
-		//that works
-	//note that cmd_vel is the linear velocity in XYZ, and then the angular velocity about
-		//XYZ axes.
-	//publish to "robot_0/cmd_vel"
-	//?????
+	//ros::spin() will enter a loop, pumping callbacks. Will exit w ctrl+C, or shutdown by master.
 	ros::spin();
-return 0;
-}
+	ros::Rate loop_rate(10); //the loop time is every 10 ms?
+
+//-----------------------------------------------------------------------------------------
+	//messages to be published
+
+	//with publish() function. The paramater is the message object (in this case called "message")
+	//must have same type as advertise<>() call earlier
+
+	while (ros::ok()){ //while the node is running?
+		geometry_msgs::Twist message;
+			//creates a variable of type "geometry_msgs/Twist" called "message."
+		message.linear.x = lin_vel;
+		message.angular.z = ang_vel;
+			//"message" is formatted this way to conform with the type geometry_msgs/Twist
+			//recall that we included geometry_msgs/Twist in our header
+		if(lin_vel > 0 && laser_data [270/2] < 2){
+			message.linear.x = 0;
+		}
+		vel_pub.publish(message);
+		ros::spinOnce();
+		loop_rate.sleep();
+		//go over the spinOnce and loop rate stuff
+	}
+	return 0;
+}//end of 'main' function

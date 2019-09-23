@@ -9,9 +9,9 @@ project(lab02_package)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  stdmsgs
-  stdr_simulator
-  stdr_simulator/stdr_robot #? does it depend on the whole simulator or just the stdr_robot?
+  std_msgs
+#  stdr_simulator/stdr_simulator
+  stdr_robot
 )
 
 ## System dependencies are found with CMake's conventions
@@ -135,7 +135,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/lab02_package_node.cpp)
-add_executable(lab02_node src/lab02_code.cpp)
+add_executable(lab02_package_node src/lab02_code.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -150,7 +150,7 @@ add_executable(lab02_node src/lab02_code.cpp)
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(lab02_node ${catkin_LIBRARIES})
+target_link_libraries(lab02_package_node ${catkin_LIBRARIES})
 #############
 ## Install ##
 #############
