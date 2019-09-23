@@ -18,15 +18,13 @@ std::vector<float> laser_data;
 
 void LaserCallback(const sensor_msgs::LaserScan::ConstPtr& msg){
 	laser_data = msg-> ranges;
-	//printf("Got Laser scan data \n");	
-	ROS_INFO("Got laser scan data\n");
 }
 
 void VelocityCallback(const geometry_msgs::Twist::ConstPtr& msg){
 	lin_vel = msg->linear.x;
 	ang_vel = msg->angular.z;
-	printf("Desired velocities are:\n linear [%f]\n angular: [%f]\n", lin_vel, ang_vel);
-	//ROS_INFO("Desired Velocities are: linear: [%f]\n angular: [%f]\n", lin_vel, ang_vel);
+	//printf("Desired velocities are:\n linear [%f]\n angular: [%f]\n", lin_vel, ang_vel);
+	ROS_INFO("Desired Velocities are: linear: [%f]\n angular: [%f]\n", lin_vel, ang_vel);
 }
 
 int main(int argc, char **argv){
@@ -58,7 +56,7 @@ int main(int argc, char **argv){
 	//argument in <> tags is the message type. Note that you use :: instead of /
 	//second argument to advertise is the name of the topic you are publishing to
 	//third argument is size of message queue
-	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("robot0/cmd_vel", 1);
 		//again, ros::Publisher is the variable type
 		//"handle" is the nodehandle from earlier
 		//advertise is a function. I guess you can have function<one_arg>(another_arg) in CPP?? idk
@@ -83,7 +81,7 @@ int main(int argc, char **argv){
 		message.angular.z = ang_vel;
 			//"message" is formatted this way to conform with the type geometry_msgs/Twist
 			//recall that we included geometry_msgs/Twist in our header
-		if(lin_vel > 0 && laser_data [270/2] < 2){
+		if(lin_vel > 0 && laser_data [270] < 3){
 			message.linear.x = 0;
 		}
 		vel_pub.publish(message);
