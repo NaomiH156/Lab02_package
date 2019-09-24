@@ -7,6 +7,20 @@
 #include "sensor_msgs/LaserScan.h"
 
 
+/*-----------------Naomi Hourihane, 9/24/2019, 3:00 PM.............................................
+	
+	NOTE: I never figured out how to make this code scopable. I had to hard-code in the
+		Names of the topics that this node subscribes and publishes to.
+
+	If I knew more about messing with strings in C++, I could probably do it, but for now
+		the node subscribes and publishes to stuff in the robot0 namespace.
+
+
+......................................................................................................*/
+
+
+
+
 //"global" variables:
 float lin_vel = 0;
 float ang_vel = 0;
@@ -58,7 +72,7 @@ int main(int argc, char **argv){
 	//first argument - name of topic to subscribe to
 	//second argument - size of message queue
 	//third argument - name of callback function to call
-	ros::Subscriber vel_sub = handle.subscribe("des_vel", 1, VelocityCallback);
+	ros::Subscriber vel_sub = handle.subscribe("robot0/des_vel", 1, VelocityCallback);
 	//ROS_INFO ("Handle for des_vel Subscription set!\n");
 		//ros::Subscriber is like the variable type (like when you type "int x = 5;").
 		//"hand;e" is the node handle we created above
@@ -76,7 +90,7 @@ int main(int argc, char **argv){
 	//argument in <> tags is the message type. Note that you use :: instead of /
 	//second argument to advertise is the name of the topic you are publishing to
 	//third argument is size of message queue
-	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>(topic_name, 1);
+	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("robot0/cmd_vel", 1); //topic_name, 1;
 	//ROS_INFO("Published to robot0/cmd_vel!\n");
 		//again, ros::Publisher is the variable type
 		//"handle" is the nodehandle from earlier
@@ -106,7 +120,7 @@ int main(int argc, char **argv){
 		if(lin_vel > 0 && laser_data [270/2] < 2){
 			//PUT MORE CODE HERE ABOUT HOW TO AVOID STUFF
 			message.linear.x = 0;
-			ROS_INFO("Robot stopped!\n");
+			//ROS_INFO("Robot stopped!\n");
 		}
 		vel_pub.publish(message);
 		//ROS_INFO("Published to robot0/cmd_vel!\n Desired velocity = [%f]\n", lin_vel);

@@ -6,13 +6,21 @@
 	<!--<include file="$(find stdr_robot)/launch/robot_manager.launch"/> -->
 	<!-- server_with_map_and_gui.launch already includes robot_manager.launch i guess?-->
 
-	<node pkg="rqt_gui" type = "rqt_gui" name = "rqt_gui" />
-	<!-- launches the robot steering gui -->
+	
 
 	<!--put another tag in here to launch the robot itself-->
 	
 
+
+	<arg name="robot" default="robot0"/>
+
+	<node pkg="rqt_gui" type = "rqt_gui" name = "rqt_gui" ns="$(arg robot)" />
+	<!-- launches the robot steering gui. Must be launched into same namespace -->
+
 	<find file="$(lab02_package)/launch/lab02_node_only.launch"/>
+	<!-- Doing it this above way doesn't work??? idk -->
+
+	<node pkg="lab02_package" type="lab02_package_node" name="lab02_node" output="screen" ns="$(arg robot)" />
 	
 	
 </launch>
