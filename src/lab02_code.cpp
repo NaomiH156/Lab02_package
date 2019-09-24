@@ -87,7 +87,7 @@ int main(int argc, char **argv){
 		message.angular.z = ang_vel;
 			//"message" is formatted this way to conform with the type geometry_msgs/Twist
 			//recall that we included geometry_msgs/Twist in our header
-		if(lin_vel != 0 && laser_data [270] < 0.5){
+		if(lin_vel > 0 && laser_data [270/2] < 2){
 			//PUT MORE CODE HERE ABOUT HOW TO AVOID STUFF
 			message.linear.x = 0;
 			ROS_INFO("Robot stopped!\n");
@@ -98,6 +98,7 @@ int main(int argc, char **argv){
 		loop_rate.sleep();
 		/* OKAY SO, WHEN YOU USE RQT_GUI to update des_vel, I get an error that says
 		[lab02_node_main] process has died. IDK why */
+		//I know why now, I forgot to put rqt_gui in the build dependencies in package.xml
 
 	}
 	return 0;

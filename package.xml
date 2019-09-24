@@ -53,6 +53,8 @@
   <build_depend>stdmsgs</build_depend>
   <!-- dependency on stdr launchers!!!  -->
   <build_depend>stdr_launchers</build_depend>
+  <!-- dependency on rqt_gui -->
+  <build_depend>rqt_gui</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>stdmsgs</build_export_depend>
   <exec_depend>roscpp</exec_depend>
