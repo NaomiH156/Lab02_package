@@ -1,12 +1,11 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <sstream> //I don't know what sstream is for but I had it earlier so I'm gonna keep it
-#include <stdlib.h> 
+#include <stdlib.h>
+#include <string> //so that I can pass topic names as an argument as a string
 #include "geometry_msgs/Twist.h" //different topics to include
 #include "sensor_msgs/LaserScan.h"
-//#include "stdr_simulator/robot0/cmd_vel.h" //how to modify this if there's more than one robot?
 
-//Okay FUCK everything else im gonna see if i can just write a node that subscribes and prints what info it is hearing
 
 //"global" variables:
 float lin_vel = 0;
@@ -32,7 +31,24 @@ int main(int argc, char **argv){
 	ros::NodeHandle handle;
 
 	ROS_INFO("Main Node started!!\n");
-	//Why is the main function not getting called?
+
+//------------------------------------------------------------------------------------------
+	//accepting the topic name as an argument. Copied from the assignment sheet
+	int opt;
+	char* topic_name;
+	while ((opt = getopt(argc, (argv), "n:")) != -1){
+		switch(opt){
+			case 'n':
+				topic_name = optarg;
+				break;
+			default:
+				printf("The -%c is not a recognized parameter.\n", opt);
+				break;
+		}
+	}
+
+
+
 //-------------------------------------------------------------------------------------------	
 	//"subscribe" notes:
 
@@ -60,7 +76,7 @@ int main(int argc, char **argv){
 	//argument in <> tags is the message type. Note that you use :: instead of /
 	//second argument to advertise is the name of the topic you are publishing to
 	//third argument is size of message queue
-	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("robot0/cmd_vel", 1);
+	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>(topic_name, 1);
 	//ROS_INFO("Published to robot0/cmd_vel!\n");
 		//again, ros::Publisher is the variable type
 		//"handle" is the nodehandle from earlier

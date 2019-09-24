@@ -1,0 +1,4 @@
+<launch>
+	<arg name="robot" default="robot0"/>
+	<node pkg="lab02_package" type="lab02_package_node" output="screen" ns="$(arg robot)"/>
+</launch>

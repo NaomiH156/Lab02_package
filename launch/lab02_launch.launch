@@ -10,10 +10,10 @@
 	<!-- launches the robot steering gui -->
 
 	<!--put another tag in here to launch the robot itself-->
+	
 
-	<node pkg="lab02_package" type="lab02_package_node" name = "lab02_node_main" output="screen"/>
-	<!-- this is where you anonymize the node so that multiple instances of the same node have different names.
-	go back and edit this in later. -->
-
+	<find file="$(lab02_package)/launch/lab02_node_only.launch"/>
+	
+	
 </launch>
 
