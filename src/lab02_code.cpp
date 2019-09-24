@@ -72,13 +72,13 @@ int main(int argc, char **argv){
 	//first argument - name of topic to subscribe to
 	//second argument - size of message queue
 	//third argument - name of callback function to call
-	ros::Subscriber vel_sub = handle.subscribe("robot0/des_vel", 1, VelocityCallback);
+	ros::Subscriber vel_sub = handle.subscribe("des_vel", 1, VelocityCallback);
 	//ROS_INFO ("Handle for des_vel Subscription set!\n");
 		//ros::Subscriber is like the variable type (like when you type "int x = 5;").
 		//"hand;e" is the node handle we created above
 		//subscribe() is a function (included in ros.h or something)
 		//"vel_sub" = "velocity subscription"
-	ros::Subscriber las_sub = handle.subscribe("/robot0/laser_1", 1, LaserCallback);
+	ros::Subscriber las_sub = handle.subscribe("laser_1", 1, LaserCallback);
 	//ROS_INFO ("Handle for laser data subscription set!\n");
 		//"las_sub" = "laser subscription"
 		//MODIFY THIS CALL FOR IF THERE IS MORE THAN ONE ROBOT IN THE SIMULATION??
@@ -90,7 +90,7 @@ int main(int argc, char **argv){
 	//argument in <> tags is the message type. Note that you use :: instead of /
 	//second argument to advertise is the name of the topic you are publishing to
 	//third argument is size of message queue
-	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("robot0/cmd_vel", 1); //topic_name, 1;
+	ros::Publisher vel_pub = handle.advertise<geometry_msgs::Twist>("cmd_vel", 1); //topic_name, 1;
 	//ROS_INFO("Published to robot0/cmd_vel!\n");
 		//again, ros::Publisher is the variable type
 		//"handle" is the nodehandle from earlier
